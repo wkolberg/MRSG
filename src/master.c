@@ -68,6 +68,7 @@ int master (int argc, char* argv[])
 	    if (message_is (msg, SMS_HEARTBEAT))
 	    {
 		heartbeat = &job.heartbeats[wid];
+		job.missed_heartbeats[wid] = 0;
 
 		if (is_straggler (worker))
 		{
