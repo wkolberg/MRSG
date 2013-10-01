@@ -50,6 +50,9 @@ int master (int argc, char* argv[])
     print_config ();
     XBT_INFO ("JOB BEGIN"); XBT_INFO (" ");
 
+    /* Spawn a process to identify host failures. */
+    MSG_process_create ("HB-timeout", heartbeat_timeout, NULL, MSG_host_self());
+
     tasks_log = fopen ("tasks.csv", "w");
     fprintf (tasks_log, "task_id,phase,worker_id,time,action,shuffle_end\n");
 
