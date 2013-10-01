@@ -248,6 +248,8 @@ static void init_job (void)
     xbt_assert (config.initialized, "init_config has to be called before init_job");
 
     job.finished = 0;
+    job.missed_heartbeats = xbt_new0 (int, config.number_of_workers);
+    job.failed_tasks_by_worker = xbt_new0 (int, config.number_of_workers);
     job.heartbeats = xbt_new (struct heartbeat_s, config.number_of_workers);
     for (wid = 0; wid < config.number_of_workers; wid++)
     {
