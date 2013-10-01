@@ -40,19 +40,26 @@ int worker (int argc, char* argv[])
     char           mailbox[MAILBOX_ALIAS_SIZE];
     msg_host_t     me;
 
-    me = MSG_host_self ();
+    if (!job.finished)
+    {
+	MSG_process_auto_restart_set (MSG_process_self(), 1);
 
-    /* Spawn a process that listens for tasks. */
-    MSG_process_create ("listen", listen, NULL, me);
-    /* Spawn a process to exchange data with other workers. */
-    MSG_process_create ("data-node", data_node, NULL, me);
-    /* Start sending heartbeat signals to the master node. */
-    heartbeat ();
+	reset_worker_info ();
 
-    sprintf (mailbox, DATANODE_MAILBOX, get_worker_id (me));
-    send_sms (SMS_FINISH, mailbox);
-    sprintf (mailbox, TASKTRACKER_MAILBOX, get_worker_id (me));
-    send_sms (SMS_FINISH, mailbox);
+	me = MSG_host_self ();
+
+	/* Spawn a process that listens for tasks. */
+	MSG_process_create ("listen", listen, NULL, me);
+	/* Spawn a process to exchange data with other workers. */
+	MSG_process_create ("data-node", data_node, NULL, me);
+	/* Start sending heartbeat signals to the master node. */
+	heartbeat ();
+
+	sprintf (mailbox, DATANODE_MAILBOX, get_worker_id (me));
+	send_sms (SMS_FINISH, mailbox);
+	sprintf (mailbox, TASKTRACKER_MAILBOX, get_worker_id (me));
+	send_sms (SMS_FINISH, mailbox);
+    }
 
     return 0;
 }
