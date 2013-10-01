@@ -28,6 +28,7 @@ static FILE*       tasks_log;
 
 static void print_config (void);
 static void print_stats (void);
+static int heartbeat_timeout (int argc, char* argv[]);
 static int is_straggler (msg_host_t worker);
 static int task_time_elapsed (msg_task_t task);
 static void set_speculative_tasks (msg_host_t worker);
@@ -164,6 +165,28 @@ static void print_stats (void)
     XBT_INFO ("normal reduces: %d", stats.reduce_normal);
     XBT_INFO ("speculative reduces: %d", stats.reduce_spec);
     XBT_INFO (" ");
+}
+
+/** @brief  Process that check for workers timeouts. */
+static int heartbeat_timeout (int argc, char* argv[])
+{
+    size_t  wid;
+
+    while (!job.finished)
+    {
+	MSG_process_sleep (config.heartbeat_interval);
+
+	for (wid = 0; wid < config.number_of_workers; wid++)
+	{
+	    if ((job.missed_heartbeats[wid]*config.heartbeat_interval) >= HEARTBEAT_TIMEOUT)
+	    {
+		cleanup_failed_worker_tasks (wid);
+	    }
+	    job.missed_heartbeats[wid]++;
+	}
+    }
+
+    return 0;
 }
 
 /**
