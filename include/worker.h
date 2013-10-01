@@ -28,4 +28,10 @@ along with MRSG.  If not, see <http://www.gnu.org/licenses/>. */
  */
 size_t get_worker_id (msg_host_t worker);
 
+/**
+ * @brief  Prepare tasks for re-execution.
+ * @param  wid  The failed worker's ID.
+ */
+void cleanup_failed_worker_tasks (size_t wid);
+
 #endif /* !WORKER_H */

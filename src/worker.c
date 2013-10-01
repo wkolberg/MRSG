@@ -56,6 +56,46 @@ int worker (int argc, char* argv[])
     return 0;
 }
 
+void cleanup_failed_worker_tasks (size_t wid)
+{
+    int          i;
+    int          phase;
+    size_t       tid;
+    task_info_t  ti;
+
+    for (tid = 0; tid < config.amount_of_tasks[REDUCE]; tid++)
+	job.map_output[wid][tid] = 0;
+
+    for (phase = MAP; phase <= REDUCE; phase++)
+    {
+	for (tid = 0; tid < config.amount_of_tasks[phase]; tid++)
+	{
+	    for (i = 0; i < MAX_SPECULATIVE_COPIES; i++)
+	    {
+		if (job.task_list[phase][tid][i] != NULL)
+		{
+		    ti = (task_info_t) MSG_task_get_data (job.task_list[phase][tid][i]);
+		    if (ti->wid == wid)
+		    {
+			//FIXME: MSG_task_destroy (job.task_list[phase][tid][i]);
+			job.task_list[phase][tid][i] = NULL;
+			if (job.task_status[phase][tid] != T_STATUS_DONE)
+			{
+			    job.failed_tasks_by_worker[wid]++;
+			    if (job.failed_tasks_by_worker[wid] >= MAXIMUM_WORKER_FAILURES)
+				XBT_INFO ("INFO: worker '%s' was blacklisted", MSG_host_get_name(config.workers[wid]));
+			    //TODO Check if there still are non-blacklisted workers
+			    job.task_instances[phase][tid]--;
+			    if (job.task_instances[phase][tid] == 0)
+				job.task_status[phase][tid] = T_STATUS_PENDING;
+			}
+		    }
+		}
+	    }
+	}
+    }
+}
+
 /**
  * @brief  The heartbeat loop.
  */
