@@ -21,6 +21,7 @@ along with MRSG.  If not, see <http://www.gnu.org/licenses/>. */
 
 XBT_LOG_EXTERNAL_DEFAULT_CATEGORY (msg_test);
 
+static void reset_worker_info (void);
 static void heartbeat (void);
 static int listen (int argc, char* argv[]);
 static int compute (int argc, char* argv[]);
@@ -94,6 +95,20 @@ void cleanup_failed_worker_tasks (size_t wid)
 	    }
 	}
     }
+}
+
+static void reset_worker_info (void)
+{
+    size_t  wid;
+
+    wid = get_worker_id (MSG_host_self());
+
+    cleanup_failed_worker_tasks (wid);
+
+    job.heartbeats[wid].slots_av[MAP] = config.slots[MAP];
+    job.heartbeats[wid].slots_av[REDUCE] = config.slots[REDUCE];
+
+    //TODO Update stats.
 }
 
 /**
