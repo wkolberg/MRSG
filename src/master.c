@@ -76,11 +76,14 @@ int master (int argc, char* argv[])
 		}
 		else
 		{
-		    if (heartbeat->slots_av[MAP] > 0)
-			send_map_to_worker (worker);
+		    if (job.failed_tasks_by_worker[wid] < MAXIMUM_WORKER_FAILURES)
+		    {
+			if (heartbeat->slots_av[MAP] > 0)
+			    send_map_to_worker (worker);
 
-		    if (heartbeat->slots_av[REDUCE] > 0)
-			send_reduce_to_worker (worker);
+			if (heartbeat->slots_av[REDUCE] > 0)
+			    send_reduce_to_worker (worker);
+		    }
 		}
 	    }
 	    else if (message_is (msg, SMS_TASK_DONE))
