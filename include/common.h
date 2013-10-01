@@ -79,6 +79,8 @@ struct config_s {
 struct job_s {
     int           finished;
     int           tasks_pending[2];
+    int*          failed_tasks_by_worker;
+    int*          missed_heartbeats;
     int*          task_instances[2];
     int*          task_status[2];
     msg_task_t**  task_list[2];
