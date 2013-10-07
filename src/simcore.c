@@ -96,6 +96,7 @@ static msg_error_t run_simulation (const char* platform_file, const char* deploy
 
     MSG_function_register ("master", master);
     MSG_function_register ("worker", worker);
+    MSG_function_register ("datanode", data_node);
     MSG_launch_application (deploy_file);
 
     init_mr_config (mr_config_file);
