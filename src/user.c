@@ -30,7 +30,7 @@ void MRSG_set_task_cost_f ( double (*f)(enum phase_e phase, size_t tid, size_t w
     user.task_cost_f = f;
 }
 
-void MRSG_set_dfs_f ( void (*f)(char** dfs_matrix, size_t chunks, size_t workers, int replicas) )
+void MRSG_set_dfs_f ( void (*f)(char** dfs_matrix, size_t chunks, size_t datanodes, int replicas) )
 {
     user.dfs_f = f;
 }

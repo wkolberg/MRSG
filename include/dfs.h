@@ -29,7 +29,7 @@ void distribute_data (void);
 /**
  * @brief  Default data distribution algorithm.
  */
-void default_dfs_f (char** dfs_matrix, size_t chunks, size_t workers, int replicas);
+void default_dfs_f (char** dfs_matrix, size_t chunks, size_t datanodes, int replicas);
 
 /**
  * @brief  Choose a random DataNode that owns a specific chunk.

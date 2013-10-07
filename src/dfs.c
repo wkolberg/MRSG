@@ -34,42 +34,40 @@ void distribute_data (void)
     chunk_owner = xbt_new (char*, config.chunk_count);
     for (chunk = 0; chunk < config.chunk_count; chunk++)
     {
-	chunk_owner[chunk] = xbt_new0 (char, config.number_of_workers);
+	chunk_owner[chunk] = xbt_new0 (char, config.number_of_datanodes);
     }
 
     /* Call the distribution function. */
-    user.dfs_f (chunk_owner, config.chunk_count, config.number_of_workers, config.chunk_replicas);
+    user.dfs_f (chunk_owner, config.chunk_count, config.number_of_datanodes, config.chunk_replicas);
 }
 
-void default_dfs_f (char** dfs_matrix, size_t chunks, size_t workers, int replicas)
+void default_dfs_f (char** dfs_matrix, size_t chunks, size_t datanodes, int replicas)
 {
     int     r;
     size_t  chunk;
     size_t  owner;
 
-    if (config.chunk_replicas >= config.number_of_workers)
+    if (replicas >= datanodes)
     {
 	/* All workers own every chunk. */
-	for (chunk = 0; chunk < config.chunk_count; chunk++)
+	for (chunk = 0; chunk < chunks; chunk++)
 	{
-	    for (owner = 0; owner < config.number_of_workers; owner++)
+	    for (owner = 0; owner < datanodes; owner++)
 	    {
-		chunk_owner[chunk][owner] = 1;
+		dfs_matrix[chunk][owner] = 1;
 	    }
 	}
     }
     else
     {
 	/* Ok, it's a typical distribution. */
-	for (chunk = 0; chunk < config.chunk_count; chunk++)
+	for (chunk = 0; chunk < chunks; chunk++)
 	{
-	    for (r = 0; r < config.chunk_replicas; r++)
+	    for (r = 0; r < replicas; r++)
 	    {
-		owner = ((chunk % config.number_of_workers)
-			+ ((config.number_of_workers / config.chunk_replicas) * r)
-			) % config.number_of_workers;
+		owner = ((chunk % datanodes) + ((datanodes / replicas) * r)) % datanodes;
 
-		chunk_owner[chunk][owner] = 1;
+		dfs_matrix[chunk][owner] = 1;
 	    }
 	}
     }
@@ -79,15 +77,15 @@ size_t find_random_chunk_owner (int cid)
 {
     int     replica;
     size_t  owner = NONE;
-    size_t  wid;
+    size_t  did;
 
     replica = rand () % config.chunk_replicas;
 
-    for (wid = 0; wid < config.number_of_workers; wid++)
+    for (did = 0; did < config.number_of_datanodes; did++)
     {
-	if (chunk_owner[cid][wid])
+	if (chunk_owner[cid][did])
 	{
-	    owner = wid;
+	    owner = did;
 
 	    if (replica == 0)
 		break;
