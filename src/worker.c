@@ -50,8 +50,6 @@ int worker (int argc, char* argv[])
 
 	/* Spawn a process that listens for tasks. */
 	MSG_process_create ("listen", listen, NULL, me);
-	/* Spawn a process to exchange data with other workers. */
-	MSG_process_create ("data-node", data_node, NULL, me);
 	/* Start sending heartbeat signals to the master node. */
 	heartbeat ();
 
