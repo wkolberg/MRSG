@@ -199,12 +199,14 @@ static void init_config (void)
     msg_host_t     host;
     msg_process_t  process;
     size_t         wid;
+    size_t         did;
     unsigned int   cursor;
     xbt_dynar_t    process_list;
 
     /* Initialize hosts information. */
 
     config.number_of_workers = 0;
+    config.number_of_datanodes = 0;
 
     process_list = MSG_processes_as_dynar ();
     xbt_dynar_foreach (process_list, cursor, process)
@@ -212,11 +214,15 @@ static void init_config (void)
 	process_name = MSG_process_get_name (process);
 	if ( strcmp (process_name, "worker") == 0 )
 	    config.number_of_workers++;
+	else if ( strcmp (process_name, "datanode") == 0 )
+	    config.number_of_datanodes++;
     }
 
     config.workers = xbt_new (msg_host_t, config.number_of_workers);
+    config.datanodes = xbt_new (msg_host_t, config.number_of_datanodes);
 
     wid = 0;
+    did = 0;
     config.grid_cpu_power = 0.0;
     xbt_dynar_foreach (process_list, cursor, process)
     {
@@ -230,6 +236,14 @@ static void init_config (void)
 	    /* Add the worker's cpu power to the grid total. */
 	    config.grid_cpu_power += MSG_get_host_speed (host);
 	    wid++;
+	}
+	else if ( strcmp (process_name, "datanode") == 0 )
+	{
+	    config.datanodes[did] = host;
+	    /* Set the datanode ID as its data. */
+	    MSG_host_set_data (host, (void*)did);
+	    /* Add the worker's cpu power to the grid total. */
+	    did++;
 	}
     }
     config.grid_average_speed = config.grid_cpu_power / config.number_of_workers;
