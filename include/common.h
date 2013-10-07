@@ -70,9 +70,11 @@ struct config_s {
     int            chunk_replicas;
     int            heartbeat_interval;
     int            amount_of_tasks[2];
+    int            number_of_dfsnodes;
     int            number_of_workers;
     int            slots[2];
     int            initialized;
+    msg_host_t*    dfsnodes;
     msg_host_t*    workers;
 } config;
 
