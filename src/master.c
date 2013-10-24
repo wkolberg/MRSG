@@ -26,6 +26,7 @@ XBT_LOG_EXTERNAL_DEFAULT_CATEGORY (msg_test);
 
 static FILE*       tasks_log;
 
+static void finish_job (void);
 static void print_config (void);
 static void print_stats (void);
 static int heartbeat_timeout (int argc, char* argv[]);
@@ -132,13 +133,28 @@ int master (int argc, char* argv[])
 
     fclose (tasks_log);
 
-    job.finished = 1;
+    finish_job ();
 
     print_config ();
     print_stats ();
     XBT_INFO ("JOB END");
 
     return 0;
+}
+
+/** @brief  Finish the job and let everyone now. */
+static void finish_job (void)
+{
+    char    mailbox[MAILBOX_ALIAS_SIZE];
+    size_t  i;
+
+    job.finished = 1;
+
+    for (i = 0; i < config.number_of_datanodes; i++)
+    {
+	sprintf (mailbox, DATANODE_MAILBOX, i);
+	send_sms (SMS_FINISH, mailbox);
+    }
 }
 
 /** @brief  Print the job configuration. */
