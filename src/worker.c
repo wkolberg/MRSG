@@ -53,8 +53,6 @@ int worker (int argc, char* argv[])
 	/* Start sending heartbeat signals to the master node. */
 	heartbeat ();
 
-	sprintf (mailbox, DATANODE_MAILBOX, get_worker_id (me));
-	send_sms (SMS_FINISH, mailbox);
 	sprintf (mailbox, TASKTRACKER_MAILBOX, get_worker_id (me));
 	send_sms (SMS_FINISH, mailbox);
     }
