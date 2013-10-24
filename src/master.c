@@ -153,6 +153,7 @@ static void print_config (void)
     XBT_INFO ("maps: %d", config.amount_of_tasks[MAP]);
     XBT_INFO ("reduces: %d", config.amount_of_tasks[REDUCE]);
     XBT_INFO ("workers: %d", config.number_of_workers);
+    XBT_INFO ("datanodes: %d", config.number_of_datanodes);
     XBT_INFO ("grid power: %g flops", config.grid_cpu_power);
     XBT_INFO ("average power: %g flops/s", config.grid_average_speed);
     XBT_INFO ("heartbeat interval: %ds", config.heartbeat_interval);
