@@ -237,17 +237,14 @@ static void get_chunk (task_info_t ti)
     my_id = get_worker_id (MSG_host_self ());
 
     /* Request the chunk to the source node. */
-    if (ti->src != my_id)
+    sprintf (mailbox, DATANODE_MAILBOX, ti->src);
+    status = send_sms (SMS_GET_CHUNK, mailbox);
+    if (status == MSG_OK)
     {
-	sprintf (mailbox, DATANODE_MAILBOX, ti->src);
-	status = send_sms (SMS_GET_CHUNK, mailbox);
+	sprintf (mailbox, TASK_MAILBOX, my_id, MSG_process_self_PID ());
+	status = receive (&data, mailbox);
 	if (status == MSG_OK)
-	{
-	    sprintf (mailbox, TASK_MAILBOX, my_id, MSG_process_self_PID ());
-	    status = receive (&data, mailbox);
-	    if (status == MSG_OK)
-		MSG_task_destroy (data);
-	}
+	    MSG_task_destroy (data);
     }
 }
 
