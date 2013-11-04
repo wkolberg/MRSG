@@ -20,6 +20,7 @@ along with MRSG.  If not, see <http://www.gnu.org/licenses/>. */
 #include <xbt/log.h>
 #include <xbt/asserts.h>
 #include "common.h"
+#include "worker.h"
 #include "dfs.h"
 #include "mrsg.h"
 
@@ -201,6 +202,7 @@ static void init_config (void)
     size_t         wid;
     size_t         did;
     unsigned int   cursor;
+    w_info_t       wi;
     xbt_dynar_t    process_list;
 
     /* Initialize hosts information. */
@@ -232,7 +234,9 @@ static void init_config (void)
 	{
 	    config.workers[wid] = host;
 	    /* Set the worker ID as its data. */
-	    MSG_host_set_data (host, (void*)wid);
+	    wi = xbt_new (struct w_info_s, 1);
+	    wi->wid = wid;
+	    MSG_host_set_data (host, (void*)wi);
 	    /* Add the worker's cpu power to the grid total. */
 	    config.grid_cpu_power += MSG_get_host_speed (host);
 	    wid++;
@@ -306,8 +310,6 @@ static void init_stats (void)
     stats.map_spec_r = 0;
     stats.reduce_normal = 0;
     stats.reduce_spec = 0;
-    stats.maps_processed = xbt_new0 (int, config.number_of_workers);
-    stats.reduces_processed = xbt_new0 (int, config.number_of_workers);
 }
 
 /**
@@ -321,8 +323,6 @@ static void free_global_mem (void)
 	xbt_free_ref (&chunk_owner[i]);
     xbt_free_ref (&chunk_owner);
 
-    xbt_free_ref (&stats.maps_processed);
-
     xbt_free_ref (&config.workers);
     xbt_free_ref (&job.task_status[MAP]);
     xbt_free_ref (&job.task_instances[MAP]);
@@ -335,6 +335,5 @@ static void free_global_mem (void)
     for (i = 0; i < config.amount_of_tasks[REDUCE]; i++)
 	xbt_free_ref (&job.task_list[REDUCE][i]);
     xbt_free_ref (&job.task_list[REDUCE]);
-    xbt_free_ref (&stats.reduces_processed);
 }
 
