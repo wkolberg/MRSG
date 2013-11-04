@@ -47,14 +47,17 @@ int worker (int argc, char* argv[])
 {
     char           mailbox[MAILBOX_ALIAS_SIZE];
     msg_host_t     me;
+    w_info_t       wi;
 
     if (!job.finished)
     {
 	MSG_process_auto_restart_set (MSG_process_self(), 1);
 
-	reset_worker_info ();
-
 	me = MSG_host_self ();
+	wi = (w_info_t) MSG_host_get_data (me);
+	sscanf (argv[1], "%zu", &wi->region);
+
+	reset_worker_info ();
 
 	/* Spawn a process that listens for tasks. */
 	MSG_process_create ("listen", listen, NULL, me);
