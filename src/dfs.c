@@ -25,6 +25,13 @@ XBT_LOG_EXTERNAL_DEFAULT_CATEGORY (msg_test);
 
 static void send_data (msg_task_t msg);
 
+size_t get_datanode_id (msg_host_t datanode)
+{
+    d_info_t  di;
+
+    di = (d_info_t) MSG_host_get_data (datanode);
+    return di->did;
+}
 
 void distribute_data (void)
 {
@@ -105,7 +112,7 @@ int data_node (int argc, char* argv[])
     msg_error_t  status;
     msg_task_t   msg = NULL;
 
-    sprintf (mailbox, DATANODE_MAILBOX, get_worker_id (MSG_host_self ()));
+    sprintf (mailbox, DATANODE_MAILBOX, get_datanode_id (MSG_host_self ()));
 
     while (!job.finished)
     {
@@ -135,7 +142,7 @@ static void send_data (msg_task_t msg)
     size_t       my_id;
     task_info_t  ti;
 
-    my_id = get_worker_id (MSG_host_self ());
+    my_id = get_datanode_id (MSG_host_self ());
 
     sprintf (mailbox, TASK_MAILBOX,
 	    get_worker_id (MSG_task_get_source (msg)),

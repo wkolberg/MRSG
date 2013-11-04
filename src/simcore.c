@@ -197,6 +197,7 @@ static void read_mr_config_file (const char* file_name)
 static void init_config (void)
 {
     const char*    process_name = NULL;
+    d_info_t       di;
     msg_host_t     host;
     msg_process_t  process;
     size_t         wid;
@@ -245,7 +246,9 @@ static void init_config (void)
 	{
 	    config.datanodes[did] = host;
 	    /* Set the datanode ID as its data. */
-	    MSG_host_set_data (host, (void*)did);
+	    di = xbt_new (struct d_info_s, 1);
+	    di->did = did;
+	    MSG_host_set_data (host, (void*)di);
 	    /* Add the worker's cpu power to the grid total. */
 	    did++;
 	}

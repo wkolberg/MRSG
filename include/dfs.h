@@ -18,6 +18,12 @@ along with MRSG.  If not, see <http://www.gnu.org/licenses/>. */
 #ifndef DFS_H
 #define DFS_H
 
+typedef struct d_info_s {
+    size_t  did;
+}* d_info_t;
+
+size_t get_datanode_id (msg_host_t datanode);
+
 /** @brief  Matrix that maps chunks to workers. */
 char**  chunk_owner;
 
