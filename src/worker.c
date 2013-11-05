@@ -28,6 +28,7 @@ static int compute (int argc, char* argv[]);
 static void update_map_output (msg_host_t worker, size_t mid);
 static void get_chunk (task_info_t ti);
 static void get_map_output (task_info_t ti);
+static size_t get_worker_region (msg_host_t worker);
 
 size_t get_worker_id (msg_host_t worker)
 {
@@ -322,5 +323,13 @@ static void get_map_output (task_info_t ti)
     ti->shuffle_end = MSG_get_clock ();
 
     xbt_free_ref (&data_copied);
+}
+
+static size_t get_worker_region (msg_host_t worker)
+{
+    w_info_t  wi;
+
+    wi = (w_info_t) MSG_host_get_data (worker);
+    return wi->region;
 }
 
