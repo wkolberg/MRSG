@@ -25,6 +25,7 @@ static void reset_worker_info (void);
 static void heartbeat (void);
 static int listen (int argc, char* argv[]);
 static int compute (int argc, char* argv[]);
+static void send_result (task_info_t ti);
 static void update_map_output (msg_host_t worker, size_t mid);
 static void get_chunk (task_info_t ti);
 static void get_map_output (task_info_t ti);
@@ -217,6 +218,25 @@ static int compute (int argc, char* argv[])
 	send (SMS_TASK_DONE, 0.0, 0.0, ti, MASTER_MAILBOX);
 
     return 0;
+}
+
+static void send_result (task_info_t ti)
+{
+    char    mailbox[MAILBOX_ALIAS_SIZE];
+    double  size;
+
+    switch (ti->phase)
+    {
+	case MAP:
+	    size = map_output_size (ti->id);
+	    break;
+
+	case REDUCE:
+	    size = user.reduce_output_f (ti->id);
+	    break;
+    }
+    sprintf (mailbox, DATANODE_MAILBOX, ti->src);
+    send (SMS_TASK_DONE, 0.0, size, ti, mailbox);
 }
 
 /**
