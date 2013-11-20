@@ -117,6 +117,7 @@ struct user_s {
     double (*task_cost_f)(enum phase_e phase, size_t tid, size_t wid);
     void (*dfs_f)(char** dfs_matrix, size_t chunks, size_t workers, int replicas);
     int (*map_output_f)(size_t mid, size_t rid);
+    double (*reduce_output_f)(size_t rid);
 } user;
 
 

@@ -76,6 +76,7 @@ static void check_config (void)
 {
     xbt_assert (user.task_cost_f != NULL, "Task cost function not specified.");
     xbt_assert (user.map_output_f != NULL, "Map output function not specified.");
+    xbt_assert (user.reduce_output_f != NULL, "Reduce output function not specified.");
 }
 
 /**
